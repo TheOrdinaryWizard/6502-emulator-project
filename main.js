@@ -1,3 +1,14 @@
+//==============================================================================//
+//                               6502js/main.js/                                //
+//==============================================================================//
+//                          program by Aydon Joseph, 2023                       //
+//==============================================================================//
+
+
+/* MAIN VARIABLES
+ * Main variables used for the emulator (e.g the program counter, registers etc.)
+ */
+
 var memory = [];
 var program_counter = 0x0000;
 
@@ -10,67 +21,68 @@ var stack_pointer = 0x00;
 //           N  V  -  B  D  I  Z  C
 var flags = [0, 0, 0, 0, 0, 0, 0, 0];
 
-// transfer instructions
-var LDA = function(value) {
+/* INSTRUCTION FUNCTIONS
+ * The functions below work as a framework so implementing the opcodes is easier
+ */
+
+// load/store instructions
+var LDA = (value) => {
     accumulator = value;
-    if (accumulator == 0) { flags[6] = 1 } else { flags[6] = 0 };
-    if (((accumulator & 0b10000000) >> 7) == 1) { flags[0] = 1 } else { flags[0] = 0 };
+    if (accumulator == 0) { flags[6] = 1; } else { flags[6] = 0; };
+    if (((accumulator & 0b10000000) >> 7) == 1) { flags[0] = 1; } else { flags[0] = 0; };
 };
-var LDX = function(value) {
+var LDX = (value) => {
     register_x = value;
-    if (register_x == 0) { flags[6] = 1 } else { flags[6] = 0 };
-    if (((register_x & 0b10000000) >> 7) == 1) { flags[0] = 1 } else { flags[0] = 0 }; 
+    if (register_x == 0) { flags[6] = 1; } else { flags[6] = 0; };
+    if (((register_x & 0b10000000) >> 7) == 1) { flags[0] = 1; } else { flags[0] = 0; };
 };
-var LDY = function(value) {
-    register_y = value; 
-    if (register_y == 0) { flags[6] = 1 } else { flags[6] = 0 };
-    if (((register_y & 0b10000000) >> 7) == 1) { flags[0] = 1 } else { flags[0] = 0 };
+var LDY = (value) => {
+    register_y = value;
+    if (register_y == 0) { flags[6] = 1; } else { flags[6] = 0; };
+    if (((register_y & 0b10000000) >> 7) == 1) { flags[0] = 1; } else { flags[0] = 0; };
 };
-var STA = function(value) {
-    memory[value] = accumulator; 
+var STA = (value) => {
+    memory[value] = accumulator;
 };
-var STX = function(value) {
-    memory[value] = register_x; 
+var STX = (value) => {
+    memory[value] = register_x;
 };
-var STY = function(value) {
-    memory[value] = register_y; 
+var STY = (value) => {
+    memory[value] = register_y;
 };
 
 // transfer instructions
-
-var TAX = function(value) {
+var TAX = (value) => {
     register_x = accumulator;
-    if (register_x == 0) { flags[6] = 1 } else { flags[6] = 0 };
-    if (((register_x & 0b10000000) >> 7) == 1) { flags[0] = 1 } else { flags[0] = 0 }; 
+    if (register_x == 0) { flags[6] = 1; } else { flags[6] = 0; };
+    if (((register_x & 0b10000000) >> 7) == 1) { flags[0] = 1; } else { flags[0] = 0; };
 };
-var TAY = function(value) {
+var TAY = (value) => {
     register_y = accumulator;
-    if (register_y == 0) { flags[6] = 1 } else { flags[6] = 0 };
-    if (((register_y & 0b10000000) >> 7) == 1) { flags[0] = 1 } else { flags[0] = 0 };
+    if (register_y == 0) { flags[6] = 1; } else { flags[6] = 0; };
+    if (((register_y & 0b10000000) >> 7) == 1) { flags[0] = 1; } else { flags[0] = 0; };
 };
-var TSX = function(value) {
+var TSX = (value) => {
     register_x = stack_pointer;
-    if (register_x == 0) { flags[6] = 1 } else { flags[6] = 0 };
-    if (((register_x & 0b10000000) >> 7) == 1) { flags[0] = 1 } else { flags[0] = 0 };
+    if (register_x == 0) { flags[6] = 1; } else { flags[6] = 0; };
+    if (((register_x & 0b10000000) >> 7) == 1) { flags[0] = 1; } else { flags[0] = 0; };
 };
-var TXA = function(value) {
+var TXA = (value) => {
     accumulator = register_x;
-    if (accumulator == 0) { flags[6] = 1 } else { flags[6] = 0 };
-    if (((accumulator & 0b10000000) >> 7) == 1) { flags[0] = 1 } else { flags[0] = 0 };
+    if (accumulator == 0) { flags[6] = 1; } else { flags[6] = 0; };
+    if (((accumulator & 0b10000000) >> 7) == 1) { flags[0] = 1; } else { flags[0] = 0; };
 };
-var TXS = function(value) {
+var TXS = (value) => {
     stack_pointer = register_x;
 };
-var TYA = function(value) {
+var TYA = (value) => {
     accumulator = register_y;
-    if (accumulator == 0) { flags[6] = 1 } else { flags[6] = 0 };
-    if (((accumulator & 0b10000000) >> 7) == 1) { flags[0] = 1 } else { flags[0] = 0 };
+    if (accumulator == 0) { flags[6] = 1; } else { flags[6] = 0; };
+    if (((accumulator & 0b10000000) >> 7) == 1) { flags[0] = 1; } else { flags[0] = 0; };
 };
 
-
 // stack instructions
-
-var PHA = function(value) {
+var PHA = (value) => {
     if (stack_pointer < 0xFF) {
         memory[0x100 + stack_pointer] = accumulator;
         stack_pointer += 1;
@@ -78,30 +90,34 @@ var PHA = function(value) {
         console.log("Stack full, cannot push");
     };
 };
-var PHP = function(value) {
+var PHP = (value) => {
     if (stack_pointer < 0xFF) {
-        memory[0x100 + stack_pointer] = join_flags(); 
+        memory[0x100 + stack_pointer] = join_flags();
     } else if (stack_pointer = 0xFF) {
         console.log("Stack full, cannot push");
     };
 };
-var PLA = function(value) {
+var PLA = (value) => {
     accumulator = memory[0x100 + stack_pointer];
     stack_pointer -= 1;
-    if (accumulator == 0) { flags[6] = 1 } else { flags[6] = 0 };
-    if (((accumulator & 0b10000000) >> 7) == 1) { flags[0] = 1 } else { flags[0] = 0 };
+    if (accumulator == 0) { flags[6] = 1; } else { flags[6] = 0; };
+    if (((accumulator & 0b10000000) >> 7) == 1) { flags[0] = 1; } else { flags[0] = 0; };
 };
-var PLP = function(value) {
+var PLP = (value) => {
     load_flags(memory[0x100 + stack_pointer]);
     stack_pointer -= 1;
 };
 
 // shift instructions
-var ASL = function() {};
-var LSR = function() {};
-var ROL = function() {};
-var ROR = function() {};
+var ASL = () => { };
+var LSR = () => { };
+var ROL = () => { };
+var ROR = () => { };
 
+
+/* BASIC FUNCTIONS
+ * These functions help compact reused code (e.g fetching from memory) and help with readability
+ */
 
 // flag manipulation functions
 function join_flags() {
@@ -119,7 +135,6 @@ function load_flags(value) {
 }
 
 // fetch functions
-
 function fetch_16b(addr) {
     if(addr < 0xFFFF) {
         return memory[addr] & memory[addr] << 8;
@@ -144,7 +159,9 @@ function inc_pc(value) {
     }
 };
 
-// addressing modes
+/* ADDRESSING MODES
+ * These functions  return  the  addresses where instructions can get their operands from
+ */
 
 function absolute(addr) {
     return (addr + 1) & ((addr + 2) << 8)
@@ -162,10 +179,10 @@ function indirect(addr) {
     return fetch_16b( (addr + 1) & ((addr + 2) << 8) );
 };
 function indirect_x(addr) {
-    return fetch_16b( (addr + 1) & ((addr + 2) << 8) ) + register_x;
+    return fetch_16b( (fetch_8b(addr) + register_x) );
 };
 function indirect_y(addr) {
-    return fetch_16b( (addr + 1) & ((addr + 2) << 8) ) + register_y;
+    return fetch_16b( fetch_8b(addr) ) + register_y;
 };
 function relative(addr) {
     return addr + fetch_8b(addr + 1);
@@ -181,7 +198,7 @@ function zpg_y(addr) {
 };
 
 
-
+// init function
 var init = function() {
     memory = [];
     for (var i = 0; i <= 65536; i++) {
@@ -192,27 +209,56 @@ var init = function() {
     register_x = 0x00;
     register_y = 0x00;
     stack_pointer = 0x00;
+    program_counter = fetch_16b(0xFFFC);
 };
 
-
-var cpu = function() {
+// main cpu function
+var cpu = () => {
 
     // fetch & decode & execute
-    switch (fetch(program_counter)) {
+    switch (fetch_8b(program_counter)) {
+        //LDA instruction
         case 0xA9:
-            LDA( fetch_8b( immediate(program_counter) ) );
+            LDA(fetch_8b(immediate(program_counter)));
         case 0xAD:
-            LDA( fetch_8b( absolute(program_counter) ) );
+            LDA(fetch_8b(absolute(program_counter)));
         case 0xBD:
-            LDA( fetch_8b( absolute_x(program_counter) ) );
+            LDA(fetch_8b(absolute_x(program_counter)));
         case 0xB9:
-            LDA( fetch_8b( absolute_y(program_counter) ) );
+            LDA(fetch_8b(absolute_y(program_counter)));
         case 0xA5:
-            LDA( fetch_8b( zpg(program_counter) ) );
+            LDA(fetch_8b(zpg(program_counter)));
         case 0xB5:
-            LDA( fetch_8b( zpg_x(program_counter) ) );
+            LDA(fetch_8b(zpg_x(program_counter)));
+        case 0xA1:
+            LDA(fetch_8b(indirect_x(program_counter)));
+        case 0xB1:
+            LDA(fetch_8b(indirect_y(program_counter)));
+        //LDX instruction
+        case 0xA2:
+            LDX(fetch_8b(immediate(program_counter)));
+        case 0xAE:
+            LDX(fetch_8b(absolute(program_counter)));
+        case 0xBE:
+            LDX(fetch_8b(absolute_y(program_counter)));
+        case 0xA6:
+            LDX(fetch_8b(zpg(program_counter0)));
+        case 0xB6:
+            LDX(fetch_8b(zpg_y(program_counter)));
+        //LDY instruction
+        case 0xA0:
+            LDY(fetch_8b(immediate(program_counter)));
+        case 0xAC:
+            LDY(fetch_8b(absolute(program_counter)));
+        case 0xBC:
+            LDY(fetch_8b(absolute_x(program_counter)));
+        case 0xA4:
+            LDY(fetch_8b(zpg(program_counter)));
+        case 0xB4:
+            LDY(fetch_8b(zpg_x(program_counter)));
+
     }
-    
+
 };
 
 init();
