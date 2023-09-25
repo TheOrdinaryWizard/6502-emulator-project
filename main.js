@@ -256,7 +256,66 @@ var cpu = () => {
             LDY(fetch_8b(zpg(program_counter)));
         case 0xB4:
             LDY(fetch_8b(zpg_x(program_counter)));
-
+        //STA instruction
+        case 0x8D:
+            STA(fetch_8b( absolute(program_counter)));
+        case 0x9D:
+            STA(fetch_8b( absolute_x(program_counter)));
+        case 0x99:
+            STA(fetch_8b( absolute_y(program_counter)));
+        case 0x85:
+            STA(fetch_8b( zpg(program_counter)));
+        case 0x95:
+            STA(fetch_8b( zpg_x(program_counter)));
+        case 0x81:
+            STA(fetch_8b( indirect_x(program_counter)));
+        case 0x91:
+            STA(fetch_8b( indirect_y(program_counter)));
+        //STX instruction
+        case 0x8E:
+            STX( absolute( program_counter));
+        case 0x86:
+            STX( zpg(program_counter));
+        case 0x96:
+            STX( indirect_y(program_counter));
+        //STY instruction
+        case 0x8C:
+            STY( absolute( program_counter));
+        case 0x84:
+            STY( zpg(program_counter));
+        case 0x94:
+            STY( indirect_x(program_counter));
+        //TAX instruction
+        case 0xAA:
+            TAX(0);
+        //TAY instruction
+        case 0xA8:
+            TAY(0);
+        //TSX instruction
+        case 0xBA:
+            TSX(0);
+        //TXA instruction
+        case 0x8A:
+            TXA(0);
+        //TXS instruction
+        case 0x9A:
+            TXS(0);
+        //TYA instruction
+        case 0x98:
+            TYA(0);
+        //PHA instruction
+        case 0x48:
+            PHA(0);
+        //PHP instruction
+        case 0x08:
+            PHP(0);
+        //PLA instruction
+        case 0x68:
+            PLA(0);
+        //PLP instruction
+        case 0x28:
+            PLP(0);
+        
     }
 
 };
