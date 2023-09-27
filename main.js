@@ -109,7 +109,9 @@ var PLP = (value) => {
 };
 
 // shift instructions
-var ASL = () => { };
+var ASL = () => {
+    
+};
 var LSR = () => { };
 var ROL = () => { };
 var ROR = () => { };
