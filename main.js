@@ -109,10 +109,14 @@ var PLP = (value) => {
 };
 
 // shift instructions
-var ASL = () => {
-    
+var ASL = (value) => {
+    flags[7] = (value & 0b10000000) >> 7;
+    value = (value << 1) & 0xFF;
 };
-var LSR = () => { };
+var LSR = () => {
+    flags[7] = (value & 0b00000001);
+    value = (value >> 1) & 0xFF;
+};
 var ROL = () => { };
 var ROR = () => { };
 
